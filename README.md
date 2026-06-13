@@ -8,11 +8,12 @@
 Welcome to the **MSATransformer Interactive Showcase**. This repository serves as a dedicated live product demo platform designed to highlight the graphical user interface, user experience, and real-time nucleotide alignment visualization of our Transformer-based MSA system.
 
 > 🌐 **Looking for the Full Production Source Code?**
+>
 > This branch/repository is optimized strictly for running and demonstrating the web product interface. To pull the complete underlying architecture, PyTorch training pipelines, model state dictionaries (`.pt`), and comprehensive backend source code, please checkout the **`main`** branch:
-> ```bash
-> git checkout main
-> ```
----
+>
+> **[MSATransformer Source Code (Main Branch)](https://github.com/TanjungArs/MSA-Transformer/tree/main)**
+
+<br>
 
 ## 🎯 Core Product Features & UI Highlights
 
