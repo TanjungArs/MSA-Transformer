@@ -391,7 +391,7 @@ GTTAATACGACTCACTATAGGGACGCCTTTCAATATGCTG`;
                 </div>
                 <div className="overflow-x-auto bg-card">
                   <div className="min-w-full p-4">
-                    <div className="mb-4 p-3 space-y-1">
+                    <div className="space-y-1">
                       {result.alignedSequences.map((seq, idx) => (
                         <div key={idx} className="flex">
                           <div className="mb-4 p-3 space-y-1 min-w-48 pr-4 py-2 border-r-2 border-primary bg-secondary/50">
