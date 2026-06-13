@@ -196,27 +196,38 @@ GTTAATACGACTCACTATAGGGACGCCTTTCAATATGCTG`;
               ))}
             </select>
           </div>
-
+          
+          <div className="mb-4 p-3 border-2 border-accent bg-accent/10 rounded-lg text-sm text-accent font-semibold">
+            Demo Mode: Input manual disabled. Use sample dataset only.
+          </div>
+          <div className="fixed top-2 right-2 z-10">
+           <span className="text-xs font-bold uppercase tracking-widest bg-accent text-accent-foreground px-2 py-1 rounded">
+              Demo Only
+            </span>
+          </div>     
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             {/* Text Input */}
+
             <div className="space-y-4 lg:col-span-2">
-              <p className="text-sm text-muted-foreground font-semibold">Text Input</p>
+            <p className="text-sm text-muted-foreground font-semibold">Text Input</p>
+
               <textarea
                 value={textInput}
-                onChange={(e) => setTextInput(e.target.value)}
-                className="w-full h-48 p-4 font-mono text-sm border-2 border-primary rounded-lg bg-card focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+                readOnly
+                className="w-full h-48 p-4 font-mono text-sm border-2 border-primary rounded-lg bg-muted/40 text-muted-foreground resize-none cursor-not-allowed"
+                placeholder="This input is disabled. Please use 'Load Example' to generate demo sequences."
               />
             </div>
+
+
 
             {/* File Upload */}
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground font-semibold"><span className="text-xs font-normal">or</span> Upload FASTA File</p>
-              <div className="border-2 border-dashed border-primary rounded-lg p-6 h-48 flex flex-col items-center justify-center">
-                <input
+              <div className="border-2 border-dashed border-primary rounded-lg p-6 h-48 flex flex-col items-center justify-center opacity-60 pointer-events-none">                <input
                   type="file"
                   id="file-upload"
-                  accept=".fasta,.fa,.fna,.txt"
-                  onChange={handleFileUpload}
+                  disabled
                   className="hidden"
                 />
                 <label
