@@ -20,10 +20,8 @@ from pymsa.core.msa import MSA
 from pymsa.core.score import SumOfPairs, PercentageOfNonGaps
 
 
-# =========================================================
-# FASTAPI
-# =========================================================
 
+# FASTAPI
 app = FastAPI(
     title="MSA Transformer API",
     version="1.0.0",
@@ -43,18 +41,14 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"[INFO] DEVICE: {DEVICE}")
 
 
-# =========================================================
-# TOKENIZER
-# =========================================================
 
+# TOKENIZER
 align_tok = AlignTokenizer()
 gap_tok = GapTokenizer()
 
 
-# =========================================================
-# FASTA UTILS
-# =========================================================
 
+# FASTA UTILS
 class PredictRequest(BaseModel):
     fasta: str
     method: int = 0
@@ -97,10 +91,8 @@ def from_flattened(flat_str, n_seqs):
     return seqs
 
 
-# =========================================================
-# METRICS
-# =========================================================
 
+# METRICS
 def compute_metrics(seqs):
     seqs = [s.upper() for s in seqs]
 
@@ -120,10 +112,8 @@ def compute_metrics(seqs):
         "gaps": gaps
     }
 
-# =========================================================
-# EXTERNAL ALIGNMENT TOOLS
-# =========================================================
 
+# EXTERNAL ALIGNMENT TOOLS
 def run_mafft(inp, out):
 
     subprocess.run(
@@ -188,10 +178,8 @@ def run_external_alignment(seqs, method):
 
         return read_alignment_file(out)
 
-# =========================================================
-# LOAD MODEL
-# =========================================================
 
+# LOAD MODEL
 MODELS = {}
 
 def load_model(n_seq):
@@ -223,18 +211,15 @@ def load_model(n_seq):
 
     return model
 
-
-# Load semua model saat startup
+# LOAD MODELS PYTORCH
 for n in [2, 3, 4, 5]:
-    MODELS[n] = load_model(n)
+    try:
+        MODELS[n] = load_model(n)
+    except Exception as e:
+        print(f"[Error] Failed to load model {n} : {e}")
 
-print("[INFO] Semua model berhasil diload")
 
-
-# =========================================================
 # INFERENCE
-# =========================================================
-
 @torch.no_grad()
 def infer(model, tokenizer, unalign, device, max_len=1024):
 
@@ -278,10 +263,8 @@ def infer(model, tokenizer, unalign, device, max_len=1024):
     )
 
 
-# =========================================================
-# ROUTES
-# =========================================================
 
+# ROUTES
 VALID_CHARS = set("ATCG")
 MAX_SEQ_LEN = 1024
 MIN_SEQ = 2
@@ -319,7 +302,7 @@ async def predict(req: PredictRequest):
                 return JSONResponse(
                     status_code=400,
                     content={
-                        "error": f"Sequence {seq_idx} kosong"
+                        "error": f"Sequence {seq_idx} is empty"
                     }
                 )
 
@@ -328,7 +311,7 @@ async def predict(req: PredictRequest):
                     status_code=400,
                     content={
                         "error": (
-                            f"Sequence {seq_idx} terlalu panjang "
+                            f"Sequence {seq_idx} is too long "
                             f"({len(seq)} > {MAX_SEQ_LEN})"
                         )
                     }
@@ -341,9 +324,9 @@ async def predict(req: PredictRequest):
                         status_code=400,
                         content={
                             "error": (
-                                f"Karakter tidak valid '{char}' "
-                                f"pada sequence {seq_idx}, "
-                                f"posisi {col_idx}"
+                                f"Invalid character '{char}' "
+                                f"in sequence {seq_idx}, "
+                                f"at position {col_idx}"
                             )
                         }
                     )
@@ -352,25 +335,25 @@ async def predict(req: PredictRequest):
             return JSONResponse(
                 status_code=400,
                 content={
-                    "error": "Minimal 2 sequence"
+                    "error": f"At least {MIN_SEQ} sequences are required"
                 }
             )
         elif n_seqs > MAX_SEQ:
             return JSONResponse(
                 status_code=400,
                 content={
-                    "error": "Maksimal 5 sequence"
+                    "error": f"Maximum {MAX_SEQ} sequences are allowed"
                 }
             )
            
             
-        # if n_seqs not in MODELS:
-        #     return JSONResponse(
-        #         status_code=400,
-        #         content={
-        #             "error": f"Model untuk {n_seqs} sequence tidak tersedia"
-        #         }
-        #     )
+        if n_seqs not in MODELS:
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": f"Model for {n_seqs} is not available"
+                }
+            )
         
         if method == 0:
             model = MODELS[n_seqs]
